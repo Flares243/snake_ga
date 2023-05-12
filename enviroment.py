@@ -164,15 +164,15 @@ class SnakeEnviroment:
         south_west = s.look_in_direction(Slope(run=-1, rise=1))
         south_east = s.look_in_direction(Slope(run=1, rise=1))
 
-        print("\n")
-        print(west)
-        print(north)
-        print(east)
-        print(south)
-        print(north_west)
-        print(north_east)
-        print(south_west)
-        print(south_east)
+        # print("\n")
+        # print(west)
+        # print(north)
+        # print(east)
+        # print(south)
+        # print(north_west)
+        # print(north_east)
+        # print(south_west)
+        # print(south_east)
 
         obs = np.concatenate(
             [

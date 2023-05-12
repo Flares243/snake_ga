@@ -16,7 +16,10 @@ def mutate(model: Module, mu: float, sigma: float) -> Module:
             # array of True and False, indicating the mutation position
             flag = np.random.rand(*param.shape) <= mu
             index = np.argwhere(flag)
-            y[name][tuple(index.T)] += sigma * torch.randn(*index.shape)
+            mutation = sigma * torch.randn(len(index))
+            # print(y[name].shape)
+            for i in range(len(index)):
+                y[name][*index[i]] += mutation[i]
 
     model.load_state_dict(y)
 

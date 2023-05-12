@@ -15,6 +15,7 @@ class SnakeNeural(Module):
         )
 
     def forward(s, x):
+        x = s.preprocces(x)
         pred = s.model(x)
         return pred
 

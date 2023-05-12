@@ -56,8 +56,10 @@ class GenericAlgoOptimizer:
 
         while not game_over:
             action = individual(state)
-            reward, score, game_over = s.env.step(action)
-            s.env.render()
+            action = torch.argmax(action).item()
+            s.env.step(action)
+            reward, score, game_over = s.env.get_info()
+            # s.env.render()
             state = s.env.get_obs()
             total_reward += reward
 
