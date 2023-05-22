@@ -3,6 +3,8 @@ import random
 from torch.nn import Module
 from typing import Tuple
 
+from misc import CROSSOVER_RATE
+
 
 def single_point_crossover(p1: Module, p2: Module) -> Tuple[Module, Module]:
     # Get the state dicts of the two parents
@@ -18,6 +20,7 @@ def single_point_crossover(p1: Module, p2: Module) -> Tuple[Module, Module]:
         key: parent1_state_dict[key] if i < crossover_point else parent2_state_dict[key]
         for i, key in enumerate(parent1_state_dict.keys())
     }
+
     child2_state_dict = {
         key: parent2_state_dict[key] if i < crossover_point else parent1_state_dict[key]
         for i, key in enumerate(parent2_state_dict.keys())
@@ -30,6 +33,33 @@ def single_point_crossover(p1: Module, p2: Module) -> Tuple[Module, Module]:
     child2.load_state_dict(child2_state_dict)
 
     return child1, child2
+
+
+def random_crossover(p1: Module, p2: Module) -> Module:
+    child = type(p1)()
+
+    for key, params in child.named_parameters():
+        child_params = params.data
+
+        p1_params = p1.state_dict()[key]
+        p2_params = p2.state_dict()[key]
+
+        for tensor_index in range(len(child_params)):
+            for value_index in range(len(child_params[tensor_index])):
+                probability = random.random()
+
+                if probability <= CROSSOVER_RATE:
+                    child_params[tensor_index][value_index] = p1_params[tensor_index][
+                        value_index
+                    ]
+                else:
+                    child_params[tensor_index][value_index] = p2_params[tensor_index][
+                        value_index
+                    ]
+
+        child.state_dict()[key] = child_params
+
+    return child
 
 
 # def uniform_binary_crossover(p1: SnakeNeural, p2: SnakeNeural):
