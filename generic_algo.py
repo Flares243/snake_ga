@@ -12,12 +12,18 @@ from selection import elitism_selection, roulette_wheel_selection
 
 
 class GenericAlgoOptimizer:
-    def __init__(s, env: SnakeEnviroment, model: Module):
+    def __init__(
+        s,
+        env: SnakeEnviroment,
+        model: Module,
+        init_population: List[Module] = [],
+    ):
         s.env = env
         s.model = model
+        s.population = init_population
 
     def optimize(s, generations=100) -> Module:
-        s.population = s.generate_population()
+        s.generate_population()
         s.fitness = [s.calculate_fitness(individual) for individual in s.population]
 
         while generations > 0:
@@ -35,12 +41,13 @@ class GenericAlgoOptimizer:
             s.population = parents + new_population
             s.fitness = parents_fitness + new_population_fitness
 
-            generations -= 1
+            # generations -= 1
 
         return elitism_selection(s.population, s.fitness)
 
     def generate_population(s) -> List[Module]:
-        return [type(s.model)() for _ in range(POPULATION_SIZE)]
+        while len(s.population) < POPULATION_SIZE:
+            s.population.append(type(s.model)())
 
     def calculate_fitness(s, individual: SnakeNeural) -> float:
         s.env.initialize()
@@ -56,12 +63,12 @@ class GenericAlgoOptimizer:
 
             s.env.step(list(Direction)[action])
 
-            _, __, score, game_over = s.env.get_info()
+            frames, reward, score, game_over = s.env.get_info()
             next_state = s.env.get_state()
 
             state = next_state
 
-        return score
+        return s.fitness_func(frames, score)
 
     def selection(
         s,
@@ -100,13 +107,11 @@ class GenericAlgoOptimizer:
 
         return population
 
-    # def fitness_func(s, frames: int, score: int) -> float:
-    #     fitness = (
-    #         frames
-    #         + ((2**score) + (score**2.1) * 500)
-    #         - (((0.25 * frames) ** 1.3) * (score**1.2))
-    #     )
-    #     # fitness = (frames) + ((2**score) + (score**2.1)*500) - (((.25 * frames)) * (score))
-    #     return max(fitness, 0.1)
-    #     # fitness = (frames) + ((2**score) + (score**2.1)*500) - (((.25 * frames)) * (score))
-    #     return max(fitness, 0.1)
+    def fitness_func(s, frames: int, score: int) -> float:
+        fitness = (
+            frames
+            + ((2**score) + (score**2.1) * 500)
+            - (((0.25 * frames) ** 1.3) * (score**1.2))
+        )
+        # fitness = (frames) + ((2**score) + (score**2.1)*500) - (((.25 * frames)) * (score))
+        return max(fitness, 0.1)

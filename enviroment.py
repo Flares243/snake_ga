@@ -20,7 +20,7 @@ background_color = pygame.Color(0, 0, 0)
 class SnakeEnviroment:
     def __init__(self, map_size=10) -> None:
         self.fps = 60
-        self.game_speed = 3
+        self.game_speed = 1
         self.square_size = 30
         self.map_size = map_size
 
@@ -139,7 +139,7 @@ class SnakeEnviroment:
         s.check_eat_food()
         s.check_game_over()
         s.generate_food()
-        # s.render()
+        s.render()
 
     def get_state(s) -> list:
         snake_direction = np.eye(len(Direction))[
