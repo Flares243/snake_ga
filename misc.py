@@ -1,16 +1,16 @@
 import os
-
 from enum import Enum
-from torch import save, load
-from torch.nn import Module
+from typing import Any
 
+from torch import load, save
+from torch.nn import Module
 
 VELOCITY = 1
 POPULATION_SIZE = 100
-SELECTED_SIZE = 10
-MUTATION_RATE = 0.01
-MUTATION_STD = 0.001
-CROSSOVER_RATE = 0.1
+PARENTS_SIZE = 10
+MUTATION_RATE = 0.05
+MUTATION_STD = 10
+CROSSOVER_RATE = 0.2
 
 
 class Slope:
@@ -24,6 +24,20 @@ class Direction(Enum):
     UP = [0, -VELOCITY]
     RIGHT = [VELOCITY, 0]
     DOWN = [0, VELOCITY]
+
+
+def one_hot_encode(input_list: list[Any]) -> list[Any]:
+    unique_values = list(set(input_list))
+    num_unique = len(unique_values)
+    encoding = []
+
+    for value in input_list:
+        one_hot = [0] * num_unique
+        index = unique_values.index(value)
+        one_hot[index] = 1
+        encoding.append(one_hot)
+
+    return encoding
 
 
 def saveModel(model: Module, file_name="model.pt"):

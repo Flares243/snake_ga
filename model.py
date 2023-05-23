@@ -1,5 +1,7 @@
-from torch import optim, nn, tensor, float32, max
-from torch.nn import Flatten, Sequential, Linear, Module, Sigmoid
+from typing import Any, List
+
+from torch import tensor
+from torch.nn import Flatten, Linear, Module, Sequential, Sigmoid
 
 
 class SnakeNeural(Module):
@@ -7,8 +9,8 @@ class SnakeNeural(Module):
         super(SnakeNeural, s).__init__()
         s.flatten = Flatten()
         s.model = Sequential(
-            Linear(36, 78),
-            Linear(78, 4),
+            Linear(32, 16),
+            Linear(16, 4),
             Sigmoid(),
         )
 
@@ -17,14 +19,14 @@ class SnakeNeural(Module):
         # s.optimizer = optim.Adam(s.model.parameters(), lr=s.lr)
         # s.loss_fn = nn.MSELoss()
 
-    def forward(s, x: list[int]) -> int:
+    def forward(s, x: List[Any]):
         x = tensor(x)
         x = x.reshape(1, -1)
         x = s.flatten(x)
 
-        pred = s.model(x).tolist()
+        pred = s.model(x).reshape(-1)
 
-        return pred.index(max(pred))
+        return pred
 
     # def traine(s, state, action, reward, next_state, game_over):
     #     pred = s.forward(state)
@@ -41,4 +43,5 @@ class SnakeNeural(Module):
     #     s.optimizer.zero_grad()
     #     loss = s.loss_fn(target, pred)
     #     loss.backward()
+    #     s.optimizer.step()
     #     s.optimizer.step()

@@ -1,12 +1,13 @@
 import torch
-from model import SnakeNeural
+
 from enviroment import SnakeEnviroment
 from misc import loadModel
+from model import SnakeNeural
 
 env = SnakeEnviroment()
 snaky = SnakeNeural()
 
-loadModel(snaky, file_name="pure_score_model.pth")
+loadModel(snaky, file_name="pure_score_model.pt")
 
 snaky.eval()
 
@@ -23,4 +24,5 @@ with torch.no_grad():
         env.render()
 
         state = env.get_state()
+        _, __, done = env.get_info()
         _, __, done = env.get_info()

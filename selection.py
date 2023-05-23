@@ -1,12 +1,15 @@
+import random
+from copy import deepcopy
 from typing import List
-from torch.nn import Module
 
 import numpy as np
-import random
+from torch.nn import Module
 
 
 def roulette_wheel_selection(
-    population: List[Module], fitness: List[float], num_childs: int
+    population: List[Module],
+    fitness: List[float],
+    num_childs: int,
 ) -> tuple[List[Module], List[int]]:
     total_fitness = sum(fitness)
     probabilities = [f / total_fitness for f in fitness]
@@ -27,12 +30,20 @@ def roulette_wheel_selection(
 
 
 def elitism_selection(
-    population: List[Module], fitness: List[float], num_individuals: int
-) -> List[Module]:
-    sorted_fitness_index = sorted(
-        range(len(fitness)), key=lambda x: fitness[x], reverse=True
-    )
+    population: List[Module],
+    fitness: List[float],
+    select_size: int,
+) -> tuple[List[Module], List[int]]:
+    best_population = [0] * select_size
+    indices = [0] * select_size
 
-    sorted_population = [population[i] for i in sorted_fitness_index]
+    fitness_copy = deepcopy(fitness)
 
-    return sorted_population[:num_individuals]
+    for index in range(select_size):
+        best_fitness_index = fitness_copy.index(max(fitness_copy))
+        fitness_copy[best_fitness_index] = -999
+
+        indices[index] = best_fitness_index
+        best_population[index] = population[best_fitness_index]
+
+    return (best_population, indices)

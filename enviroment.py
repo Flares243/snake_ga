@@ -1,8 +1,9 @@
 import random
-import pygame
-import numpy as np
 
-from misc import Slope, Direction
+import numpy as np
+import pygame
+
+from misc import Direction, Slope
 
 pygame.init()
 pygame.display.set_caption("Snake")
@@ -18,10 +19,10 @@ background_color = pygame.Color(0, 0, 0)
 
 class SnakeEnviroment:
     def __init__(self, map_size=10) -> None:
-        self.fps = 30
-        self.game_speed = 1
-        self.map_size = map_size
+        self.fps = 60
+        self.game_speed = 3
         self.square_size = 30
+        self.map_size = map_size
 
         self.window_size = (
             self.map_size * self.square_size,
@@ -39,11 +40,11 @@ class SnakeEnviroment:
         s.step_count = 0
         s.game_over = False
 
-        s.snake_direction = Direction.DOWN
+        # s.snake_direction = Direction.DOWN
         s.snake_direction = random.choice(list(Direction))
         s.tail_direction = s.snake_direction
 
-        # init_snake_pos = [0, 1]
+        # init_snake_pos = [0, 9]
         init_snake_pos = [s.map_size // 2, s.map_size // 2]
 
         s.snake = [
@@ -138,7 +139,7 @@ class SnakeEnviroment:
         s.check_eat_food()
         s.check_game_over()
         s.generate_food()
-        s.render()
+        # s.render()
 
     def get_state(s) -> list:
         snake_direction = np.eye(len(Direction))[
@@ -188,12 +189,6 @@ class SnakeEnviroment:
                 south_east,
                 south,
                 south_west,
-                [
-                    s.snake[0][0] >= s.food_position[0],
-                    s.snake[0][1] >= s.food_position[1],
-                    s.snake[0][0] <= s.food_position[0],
-                    s.snake[0][1] <= s.food_position[1],
-                ],
             ],
             dtype=np.float32,
         )
@@ -291,4 +286,5 @@ class SnakeEnviroment:
         diff_x = float(abs(x2 - x1))
         diff_y = float(abs(y2 - y1))
         dist = ((diff_x * diff_x) + (diff_y * diff_y)) ** 0.5
+        return dist
         return dist

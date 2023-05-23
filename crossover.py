@@ -1,7 +1,7 @@
-import random
+from random import random
+from typing import Tuple
 
 from torch.nn import Module
-from typing import Tuple
 
 from misc import CROSSOVER_RATE
 
@@ -45,17 +45,23 @@ def random_crossover(p1: Module, p2: Module) -> Module:
         p2_params = p2.state_dict()[key]
 
         for tensor_index in range(len(child_params)):
-            for value_index in range(len(child_params[tensor_index])):
-                probability = random.random()
+            try:
+                for value_index in range(len(child_params[tensor_index])):
+                    probability = random()
 
-                if probability <= CROSSOVER_RATE:
-                    child_params[tensor_index][value_index] = p1_params[tensor_index][
-                        value_index
-                    ]
-                else:
-                    child_params[tensor_index][value_index] = p2_params[tensor_index][
-                        value_index
-                    ]
+                    child_params[tensor_index][value_index] = (
+                        p1_params[tensor_index][value_index]
+                        if probability <= CROSSOVER_RATE
+                        else p2_params[tensor_index][value_index]
+                    )
+            except TypeError:
+                probability = random()
+
+                child_params[tensor_index] = (
+                    p1_params[tensor_index]
+                    if probability <= CROSSOVER_RATE
+                    else p2_params[tensor_index]
+                )
 
         child.state_dict()[key] = child_params
 
